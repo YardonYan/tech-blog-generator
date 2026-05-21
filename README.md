@@ -121,7 +121,7 @@ tech-blog-generator/
 > 这是 `main.go` 和 `worker.go`，写一篇关于并发模型的深度解析。
 
 **输出 / Output:**
-```markdown
+````markdown
 ---
 title: "Go Worker Pool：缓冲 Channel 如何实现天然背压"
 description: "逐行分析我们的 worker pool 实现，展示有界 channel 如何在不依赖外部组件的情况下提供流量控制。"
@@ -156,7 +156,7 @@ func Dispatch(jobs <-chan Job, workers int) { ... }
 |:---|:---|:---|
 | `all goroutines asleep` | 无缓冲 channel 无接收者 | 加 buffer 或确保接收者存在 |
 | `concurrent map write` | 并发写 map 无锁 | 用 sync.RWMutex |
-```
+````
 
 ---
 
