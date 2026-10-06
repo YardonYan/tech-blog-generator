@@ -1,23 +1,36 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)">
-    <img alt="Tech Blog Generator" width="600" src="https://img.shields.io/badge/Tech%20Blog-Generator%20v2.0-3b82f6?style=for-the-badge&logo=markdown&logoColor=white">
-  </picture>
-</p>
+<div align="center">
 
-<p align="center">
-  <b>🇨🇳 将代码和文档转化为高质量中英文技术博客的 AI Skill</b><br>
-  <b>🇬🇧 Transform source code & docs into production-ready technical blog posts</b>
-</p>
+# tech-blog-generator
 
-<p align="center">
-  <a href="#-快速开始--quick-start"><b>快速开始</b></a> ·
-  <a href="#-核心能力--key-features"><b>核心能力</b></a> ·
-  <a href="#-项目结构--project-structure"><b>项目结构</b></a> ·
-  <a href="#-致谢--credits"><b>致谢</b></a>
-</p>
+**将代码和文档转化为高质量中英文技术博客的 AI Skill**
+
+**Transform source code and docs into production-ready technical blog posts**
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/YardonYan/tech-blog-generator?style=social)](https://github.com/YardonYan/tech-blog-generator)
+[![Version](https://img.shields.io/badge/version-2.0-green)](#)
+[![Platform](https://img.shields.io/badge/platform-OpenClaw%20%C2%B7%20Claude%20Code%20%C2%B7%20Cursor-orange)](#quick-start)
+
+</div>
 
 ---
+
+<div align="center">
+
+<a href="#intro"><b>这是什么</b></a> ·
+<a href="#quick-start"><b>快速开始</b></a> ·
+<a href="#features"><b>核心能力</b></a> ·
+<a href="#avoid"><b>它会避免什么</b></a> ·
+<a href="#structure"><b>项目结构</b></a> ·
+<a href="#example"><b>示例</b></a> ·
+<a href="#license"><b>许可证</b></a>
+
+</div>
+
+---
+
+
+<a id="intro"></a>
 
 ## 📖 这是什么？ / What Is This?
 
@@ -30,6 +43,8 @@
 It doesn't just "generate an article." It emulates the workflow of a **Senior Staff Engineer**: first analyzes your code's architecture, picks the most appropriate genre (6 templates), writes under 21 strict rules (adapted from Strunk & White, Orwell, Pinker, plus 9 AI-specific rules), then self-audits across 3 passes (structure / sentence / reader perspective) before delivering.
 
 ---
+
+<a id="quick-start"></a>
 
 ## 🚀 快速开始 / Quick Start
 
@@ -62,6 +77,8 @@ git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/t
 
 ---
 
+<a id="features"></a>
+
 ## ⭐ 核心能力 / Key Features
 
 | 能力 / Feature | 🇨🇳 中文说明 | 🇬🇧 English |
@@ -75,7 +92,66 @@ git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/t
 | **引证纪律** | RULE-H：每一条关于性能、行为、设计的断言必须有人/数字/文件引用支撑 | RULE-H: Every claim about performance, behavior, or design must be backed by a specific number, code reference, or documented decision |
 | **ASCII/Mermaid 图表** | 自动为抽象概念生成架构图、数据流图、时序图 | Auto-generates architecture diagrams, data flow charts, sequence diagrams for abstract concepts |
 
+### 🎨 6 种文体 / 6 Genre Templates
+
+| 文体 / Genre | 何时使用 / When to Use | 语气 / Tone |
+|---|---|---|
+| **教程 Tutorial** | 分步实现教学 | 同行指路，不说教 |
+| **深度解析 Deep Dive** | 单一概念/机制的透彻分析 | 分析型，精确 |
+| **对比评测 Comparison** | 多种方案/技术的并列对比 | 中立，证据驱动 |
+| **复盘报告 Postmortem** | 事故或项目回顾 | 事实导向，不追责 |
+| **速查技巧 Quick Tip** | 单一技巧或模式 | 简短，可直接使用 |
+| **架构概览 Architecture** | 系统设计说明 | 系统思维，关注决策 |
+
+### 📝 21 条写作规则 / 21 Writing Rules
+
+**中文**：12 条经典规则（来自 Strunk & White、Orwell、Pinker、Gopen & Swan）+ 9 条 AI 特定规则（来自 2022-2026 年 LLM 生成文本的实地观察）。每条规则有严重度分级：**Critical**（违规则读者无法信任文本）> **High**（可见 AI 痕迹或清晰度失败）> **Medium**（局部可读性代价）。
+
+**English**: 12 canonical rules (from Strunk & White, Orwell, Pinker, Gopen & Swan) + 9 field-observed AI-specific rules (from 2022-2026 LLM output observations). Each rule has severity levels: **Critical** (reader cannot trust the text if violated) > **High** (visible AI-tell or clarity failure) > **Medium** (local readability cost).
+
+**最关键的规则 / Most Critical Rules:**
+
+| # | 🇨🇳 规则 | 🇬🇧 Rule | 严重度 / Severity |
+|---|---------|----------|-------------------|
+| 01 | 知识诅咒：不要假设读者知道你所知道的 | Curse of Knowledge: don't assume reader shares your tacit knowledge | 🔴 Critical |
+| H | 引证纪律：每条断言必须有证据支撑 | Citation Discipline: every claim must have evidence | 🔴 Critical |
+| 03 | 具体优于抽象：用具体项替换类别词 | Concrete over Abstract: replace category words with specific items | 🟠 High |
+| 04 | 删掉废话："in order to"→"to"、"due to the fact that"→"because" | Cut Needless Words: eliminate filler phrases | 🟠 High |
+
+> 📚 完整 21 条规则：见 [`references/writing_rules.md`](references/writing_rules.md)
+>
+> 📚 Full 21 rules: see [`references/writing_rules.md`](references/writing_rules.md)
+
+### 🀄 中文写作模式 / Chinese Writing Mode
+
+**中文**：当用户要求中文输出或提供中文材料时，自动激活中文模式。包含：
+- **黑话词表**（20+ 词，每个有具体替代方向）：生态→列出依赖关系、赋能→让用户能 X、闭环→A 之后 B 也接进去了、抓手→我们能改的那个变量是 X
+- **抢结论词禁止**：很清楚、说明了、显然、真正、自然会
+- **对立句法禁止**：「不是……而是……」「不在……而在……」
+- **主持口吻删除**：「聊到这里」「先把 X 单独拿出来说」「这张图想说明的事情很简单」→ 直接删，不换成语
+- **空评价词替换**：「很顺」→ 改成具体约束
+
+> 🀄 完整中文规则：见 [`references/chinese_writing.md`](references/chinese_writing.md)
+
+### 🔍 3 遍自审 / 3-Pass Self-Audit
+
+| 遍次 / Pass | 做什么 / What It Checks |
+|---|---|
+| **第 1 遍：结构审计** | 开头有没有讲清楚解决什么问题？每节是否有清晰目的？结论和开头是否呼应？ |
+| **第 2 遍：句式审计** | Ctrl+F 扫灭 26 种禁用词组。查具体锚点（每段至少一个可查证细节）。查被动语态滥用。查代码块是否有文件引用和解释。 |
+| **第 3 遍：读者视角** | 一个没看过代码库的人能跟得上吗？资深工程师会觉得被说教吗？只有 2 分钟的读者能抓住要点吗？ |
+
+> ✅ 完整审计清单：见 [`references/self_review_checklist.md`](references/self_review_checklist.md)
+
+### 🐛 10 种语言常见陷阱 / 10-Language Pitfalls
+
+涵盖 Go、Python、JS/TS、Java、Rust、C++、C#、Kotlin、Swift、Docker/K8s 的常见错误，每条有「症状→根因→修复」格式。
+
+> 🐛 完整陷阱表：见 [`references/common_pitfalls.md`](references/common_pitfalls.md)
+
 ---
+
+<a id="avoid"></a>
 
 ## 🚫 它会避免什么 / What It Avoids
 
@@ -91,6 +167,8 @@ git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/t
 
 ---
 
+<a id="structure"></a>
+
 ## 📁 项目结构 / Project Structure
 
 ```
@@ -100,6 +178,8 @@ tech-blog-generator/
 ├── LICENSE                          # 📄 Apache 2.0
 ├── agents/
 │   └── openai.yaml                  # 🎨 UI 元数据
+├── docs/
+│   └── backfill.md                  # 📝 归档：素材回填记录
 ├── references/
 │   ├── writing_rules.md             # 📚 21 条写作规则完整参考（含 BAD→GOOD 示例）
 │   ├── style_guide.md               # 🚫 禁用词组与反模式
@@ -114,6 +194,8 @@ tech-blog-generator/
 ```
 
 ---
+
+<a id="example"></a>
 
 ## 📝 示例 / Example
 
@@ -177,6 +259,13 @@ This project's writing rule system and design philosophy are deeply influenced b
 
 ---
 
+
+<a id="license"></a>
+
 ## 📄 许可证 / License
 
-Apache 2.0 — 自由使用、修改、分发。 / Free to use, modify, and distribute.
+**Apache-2.0** — 自由使用、修改、分发，需保留署名与协议声明。详见 [LICENSE](LICENSE)。
+
+Free to use, modify and distribute, provided that attribution and the license notice are retained. See [LICENSE](LICENSE) for the full text.
+
+Copyright 2026 YardonYan
