@@ -5,7 +5,7 @@ description: >-
  Supports both English and Chinese technical writing, with rigorous anti-fluff rules adapted from agent-style (21 writing rules), WRITING.md (concrete anchors), and Chinese technical writing best practices.
  Use when: Users upload code files (.py, .go, .java, .js, .ts, .rs, .cpp, .cs, .kt, .swift) or tech docs (.pdf, .md) and request "write a blog", "generate tutorial", "explain code", or "create documentation".
  NOT for: General chat, non-technical writing, marketing copy, UI text, or when no code/files are provided.
-license: MIT
+license: Apache-2.0
 ---
 
 # Role & Objective

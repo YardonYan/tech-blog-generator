@@ -97,7 +97,7 @@ git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/t
 tech-blog-generator/
 ├── SKILL.md                         # 🔧 AI 核心指令（21 规则、6 文体、3 遍自审）
 ├── README.md                        # 📖 本文档
-├── LICENSE                          # 📄 MIT
+├── LICENSE                          # 📄 Apache 2.0
 ├── agents/
 │   └── openai.yaml                  # 🎨 UI 元数据
 ├── references/
@@ -179,4 +179,4 @@ This project's writing rule system and design philosophy are deeply influenced b
 
 ## 📄 许可证 / License
 
-MIT — 自由使用、修改、分发。 / Free to use, modify, and distribute.
+Apache 2.0 — 自由使用、修改、分发。 / Free to use, modify, and distribute.
