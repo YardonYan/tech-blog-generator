@@ -34,6 +34,7 @@ It doesn't just "generate an article". It emulates a senior staff engineer's wri
 - [What It Avoids](#what-it-avoids)
 - [Project Structure](#project-structure)
 - [Example](#example)
+- [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [License](#license)
 
@@ -55,13 +56,38 @@ The writing process has three stages:
 
 ## Quick Start
 
-Clone into your OpenClaw skills directory:
+### Using the installer (recommended)
+
+The repo ships a zero-dependency installer that copies the skill into the skills directory of each AI app on your machine:
+
+```bash
+node tools/install.mjs --list                 # list available targets
+node tools/install.mjs --ai workbuddy         # install into WorkBuddy
+node tools/install.mjs --ai all               # every target
+node tools/install.mjs --ai all --dry-run     # preview only, writes nothing
+```
+
+Targets verified to exist on a real machine: WorkBuddy, TRAE China edition, CodeBuddy, Claude Code, Codex CLI, OpenClaw, Qwen Code, cc-switch.
+
+### Installing as a plugin (WorkBuddy / CodeBuddy / Claude Code)
+
+The repository root carries `.codebuddy-plugin/` and `.claude-plugin/` manifests, so it can be registered directly as a single-plugin marketplace and installed as a plugin rather than by copying directories.
+
+The field names and values follow the manifests shipped inside the apps themselves — this is not a format of my own invention. **The file format was checked field by field against the apps' own bundled marketplaces; the end-to-end register-and-load flow has not been verified.** Where you register it depends on the version you have.
+
+Regenerate the manifests after changing the `name` or version in `SKILL.md`:
+
+```bash
+node tools/build_plugins.mjs .
+```
+
+### Manual installation
 
 ```bash
 git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/tech-blog-generator
 ```
 
-Then upload your code files in a conversation and say "write a blog" or "写一篇技术博客".
+Once installed, upload your code files in a conversation and say "write a blog" or "写一篇技术博客".
 
 ### Trigger keywords
 
@@ -188,13 +214,16 @@ Full table: [`references/common_pitfalls.md`](references/common_pitfalls.md).
 ```
 tech-blog-generator/
 ├── SKILL.md                         # Core AI instructions (21 rules, 6 genres, 3-pass audit)
+├── .codebuddy-plugin/              Plugin manifests (WorkBuddy / CodeBuddy)
+├── .claude-plugin/                 Plugin manifests (Claude Code)
 ├── README.md                        # Chinese README
 ├── README.en.md                     # English README (this file)
 ├── LICENSE                          # Apache-2.0 licence
 ├── assets/
 │   └── hero.png                     # README hero image
 ├── tools/
-│   └── gen_readme_images.py         # Generates README images (Pillow)
+│   ├── gen_readme_images.py         # Generates README images (Pillow)
+│   └── build_plugins.mjs            # Generates plugin manifests
 ├── agents/
 │   └── openai.yaml                  # UI metadata
 ├── docs/
@@ -260,6 +289,64 @@ Pitfall: too high a capacity (say 10000) hides the worker bottleneck; 100 makes 
 | `all goroutines asleep` | Unbuffered channel with no receiver | Add a buffer or guarantee a receiver |
 | `concurrent map write` | Concurrent map writes without a lock | Use sync.RWMutex |
 ````
+
+---
+
+<a id="troubleshooting"></a>
+
+## Troubleshooting
+
+### Installed, but the skill never fires
+
+Check three things, in order:
+
+1. **Is `SKILL.md` at the top level of the skill directory?** The correct shape is `<app-skills-dir>/tech-blog-generator/SKILL.md`. An early version of this skill nested `SKILL.md` inside a same-named subdirectory, which stopped apps from finding it — if you are on an older copy, check the directory layout first.
+2. **Restart the app.** Most apps scan the skills directory only at startup.
+3. **Is that the directory the app actually scans?** Run `node tools/install.mjs --list`.
+
+### A script reports `❌ File not found: --help`
+
+None of the three scripts supports `--help`; the first argument is always treated as a file path. To learn the usage, read the docstring at the top of the source, or just pass a file:
+
+```bash
+python scripts/count_tokens.py path/to/draft.md
+python scripts/validate_yaml.py path/to/draft.md
+python scripts/review_draft.py path/to/draft.md
+```
+
+### `validate_yaml.py` reports `❌ Missing frontmatter start '---'`
+
+The draft has no YAML frontmatter. Every article the skill produces starts with one, and without it there is nothing to validate:
+
+```yaml
+---
+title: "Article title"
+description: "One-line summary"
+tags: [go, concurrency]
+language: en
+genre: deep-dive
+---
+```
+
+Another common message is `description should include 'Use when' and 'NOT for'` — that is a convention for the skill's own description (stating when it applies and when it does not). Draft articles can ignore it.
+
+### `review_draft.py` reports a pile of issues but exits with code 0
+
+It is an advisory tool, not a gate. The exit code is always 0; what matters is the issue count in the output, and the script draws its own conclusion (for example `🔴 High issue count — consider rewriting sections`). To use it as a CI gate you would have to parse the output yourself.
+
+### It reports `some code blocks lack file references`
+
+That is Rule H (citation discipline) at work: every code block should state its file location, otherwise the reader has no way to verify it. Add a marker such as `File: main.go:32-58`.
+
+### The scripts will not run / Python is not found
+
+All three scripts use only the Python standard library (`re`, `sys`, `pathlib`, `collections`) — no third-party packages, no network access. Python 3 is required:
+
+```bash
+python3 --version
+```
+
+On Windows, if `python` does not resolve, try `py -3`.
 
 ---
 

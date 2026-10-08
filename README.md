@@ -34,6 +34,7 @@
 - [它会避免什么](#它会避免什么)
 - [项目结构](#项目结构)
 - [示例](#示例)
+- [排错](#排错)
 - [致谢](#致谢)
 - [许可证](#许可证)
 
@@ -55,13 +56,38 @@
 
 ## 快速开始
 
-克隆到 OpenClaw skills 目录：
+### 用安装器（推荐）
+
+仓库自带一个零依赖的安装脚本，装到本机各个 AI 应用的 skills 目录：
+
+```bash
+node tools/install.mjs --list                 # 看有哪些目标可选
+node tools/install.mjs --ai workbuddy         # 装到 WorkBuddy
+node tools/install.mjs --ai all               # 装到全部目标
+node tools/install.mjs --ai all --dry-run     # 只预览，不写文件
+```
+
+已核对存在的目标：WorkBuddy、TRAE 国内版、CodeBuddy、Claude Code、Codex CLI、OpenClaw、Qwen Code、cc-switch。
+
+### 作为插件安装（WorkBuddy / CodeBuddy / Claude Code）
+
+仓库根目录带 `.codebuddy-plugin/` 与 `.claude-plugin/` 两份清单，可以直接注册成一个「单插件市场」，在应用里按插件方式安装，不用手工拷目录。
+
+清单的字段名与取值是照着应用自带的插件清单写的，不是自己发明的格式。**文件格式已逐字段对照应用自带的市场核对；注册与加载的端到端流程未做验证**，注册入口以你所装版本的界面为准。
+
+改过 `SKILL.md` 的 name 或版本号之后重新生成：
+
+```bash
+node tools/build_plugins.mjs .
+```
+
+### 手工安装
 
 ```bash
 git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/tech-blog-generator
 ```
 
-然后在对话中上传代码文件，说「写一篇技术博客」或 "write a blog" 即可。
+装好之后，在对话中上传代码文件，说「写一篇技术博客」或 "write a blog" 即可。
 
 ### 触发词
 
@@ -188,13 +214,16 @@ git clone https://github.com/YardonYan/tech-blog-generator.git ~/.qclaw/skills/t
 ```
 tech-blog-generator/
 ├── SKILL.md                         # AI 核心指令（21 规则、6 文体、3 遍自审）
+├── .codebuddy-plugin/              插件清单（WorkBuddy / CodeBuddy）
+├── .claude-plugin/                 插件清单（Claude Code）
 ├── README.md                        # 中文说明（本文件）
 ├── README.en.md                     # English README
 ├── LICENSE                          # Apache-2.0 许可证
 ├── assets/
 │   └── hero.png                     # README 门面图
 ├── tools/
-│   └── gen_readme_images.py         # 生成 README 配图（Pillow）
+│   ├── gen_readme_images.py         # 生成 README 配图（Pillow）
+│   └── build_plugins.mjs            # 生成插件清单
 ├── agents/
 │   └── openai.yaml                  # UI 元数据
 ├── docs/
@@ -260,6 +289,66 @@ func Dispatch(jobs <-chan Job, workers int) { ... }
 | `all goroutines asleep` | 无缓冲 channel 无接收者 | 加 buffer 或确保接收者存在 |
 | `concurrent map write` | 并发写 map 无锁 | 用 sync.RWMutex |
 ````
+
+---
+
+<a id="排错"></a>
+
+## 排错
+
+### 装好了但对话里没反应
+
+按顺序查三件事：
+
+一、**`SKILL.md` 是否在技能目录的根层。** 正确结构是 `<应用技能目录>/tech-blog-generator/SKILL.md`。这个技能早期版本把 `SKILL.md` 放在同名子目录里，导致应用扫不到——如果你用的是旧版本，先确认目录层级。
+
+二、**重启应用。** 多数应用只在启动时扫描技能目录。
+
+三、**确认目录是该应用真正会扫的那个。** 跑 `node tools/install.mjs --list` 看清单。
+
+### 脚本报 `❌ File not found: --help`
+
+三个脚本都不认 `--help`，直接把第一个参数当成文件路径。要看用法就读源码开头的 docstring，或者直接传文件：
+
+```bash
+python scripts/count_tokens.py path/to/draft.md
+python scripts/validate_yaml.py path/to/draft.md
+python scripts/review_draft.py path/to/draft.md
+```
+
+### `validate_yaml.py` 报 `❌ Missing frontmatter start '---'`
+
+草稿开头没有 YAML frontmatter。技能产出的每篇文章都以这段开头，缺了它就校验不了：
+
+```yaml
+---
+title: "文章标题"
+description: "一句话摘要"
+tags: [go, concurrency]
+language: zh
+genre: deep-dive
+---
+```
+
+另一个常见提示是 `description should include 'Use when' and 'NOT for'`——这是一条给技能自身写法看的规范（写清楚什么时候该用、什么时候不该用），文章草稿可以忽略。
+
+### `review_draft.py` 报了一堆问题，但退出码是 0
+
+它是建议工具，不是门禁。退出码始终是 0，看的是输出里的问题条数，脚本自己会给出结论（如 `🔴 High issue count — consider rewriting sections`）。想拿它卡 CI 的话得自己解析输出。
+
+### 报 `some code blocks lack file references`
+
+这是规则 H（引证纪律）在起作用：每个代码块都应该标明文件位置，否则读者无从核对。按提示补上 `文件：main.go:32-58` 这样的标注即可。
+
+### 脚本跑不起来 / 提示找不到 Python
+
+三个脚本只用 Python 标准库（`re`、`sys`、`pathlib`、`collections`），不装任何第三方包，也不联网。需要 Python 3：
+
+```bash
+python3 --version
+```
+
+Windows 上如果 `python` 不通就试 `py -3`。
 
 ---
 
