@@ -432,6 +432,20 @@ On Windows, if `python` does not resolve, try `py -3`.
 
 <a id="credits"></a>
 
+### The draft reads like a manual, not an article
+
+Test it by covering the title and reading only the body: does it still read as being about one thing? If not, it is not an article yet.
+
+A manual lists features; an article follows a problem. Adding adjectives will not fix it. Answer three questions first: whose problem does this solve, what can the reader do after reading, and which paragraph carries the evidence. If the answers do not come, the material is not ready, and gathering more beats polishing prose.
+
+Another common cause is writing the process as the conclusion. Readers care less about how long it took than about what to do when they hit the same thing.
+
+### A conclusion in the title hides what the post is about
+
+Conclusion-style titles suit papers, not search. People search by symptom, not by conclusion.
+
+Before naming a post, ask what someone facing this problem would type into a search box. Those words belong in the title. The conclusion belongs in the body: the title gets the post found, the body gets it finished.
+
 ## Credits
 
 This project's writing rule system and design philosophy are deeply influenced by the following open-source projects:
